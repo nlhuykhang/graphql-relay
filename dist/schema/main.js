@@ -10,6 +10,72 @@ var roll = function roll() {
   return Math.floor(6 * Math.random()) + 1;
 };
 
+var toTitleCase = function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+};
+
+var LetterCaseType = new _graphql.GraphQLEnumType({
+  name: 'LetterCase',
+  values: {
+    TITLE: {
+      value: 'title'
+    },
+    UPPER: {
+      value: 'upper'
+    },
+    LOWER: {
+      value: 'lower'
+    }
+  }
+});
+
+var EmployeeType = new _graphql.GraphQLObjectType({
+  name: 'Employee',
+  fields: function fields() {
+    return {
+      name: {
+        type: _graphql.GraphQLString,
+        args: {
+          upperCase: {
+            type: _graphql.GraphQLBoolean
+          }
+        },
+        resolve: function resolve(obj, args) {
+          var fullName = obj.firstName + ' ' + obj.lastName;
+
+          return args.upperCase ? fullName.toUpperCase() : fullName;
+        }
+      },
+      nameForCase: {
+        type: _graphql.GraphQLString,
+        args: {
+          letterCase: {
+            type: LetterCaseType
+          }
+        },
+        resolve: function resolve(obj, args) {
+          var fullName = obj.firstName + ' ' + obj.lastName;
+          switch (args.letterCase) {
+            case 'lower':
+              return fullName.toLowerCase();
+            case 'upper':
+              return fullName.toUpperCase();
+            case 'title':
+              return toTitleCase(fullName);
+            default:
+              return fullName;
+          }
+        }
+      },
+      boss: {
+        type: EmployeeType
+      }
+    };
+  }
+});
+
 var queryType = new _graphql.GraphQLObjectType({
   name: 'RootQuery',
   fields: {
@@ -21,6 +87,7 @@ var queryType = new _graphql.GraphQLObjectType({
     },
     diceRoll: {
       type: new _graphql.GraphQLList(_graphql.GraphQLInt),
+      description: '**Simulate** a dice roll determined by count',
       args: {
         count: {
           type: _graphql.GraphQLInt,
@@ -37,9 +104,21 @@ var queryType = new _graphql.GraphQLObjectType({
     },
     usersCount: {
       type: _graphql.GraphQLInt,
+      description: 'Total number of users in the database',
       resolve: function resolve(_, args, _ref) {
         var db = _ref.db;
         return db.collection('users').count();
+      }
+    },
+    exampleEmployee: {
+      type: EmployeeType,
+      args: {
+        test: {
+          type: _graphql.GraphQLInt
+        }
+      },
+      resolve: function resolve() {
+        return { firstName: 'khang', lastName: 'nguyen-le' };
       }
     }
   }

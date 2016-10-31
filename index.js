@@ -38,6 +38,7 @@ mgClient.connect(MONGO_URL, (err, db) => {
   app.use('/graphql', qlHttp({
     schema: mySchema,
     context: { db },
+    graphiql: true,
   }));
 
   app.listen(4000, () => console.log('Running express graphql on port 4000.'));

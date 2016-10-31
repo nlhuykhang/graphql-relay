@@ -48,7 +48,8 @@ _mongodb.MongoClient.connect(MONGO_URL, function (err, db) {
 
   app.use('/graphql', (0, _expressGraphql2.default)({
     schema: _main2.default,
-    context: { db: db }
+    context: { db: db },
+    graphiql: true
   }));
 
   app.listen(4000, function () {
