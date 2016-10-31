@@ -6,6 +6,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _graphql = require('graphql');
 
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var roll = function roll() {
   return Math.floor(6 * Math.random()) + 1;
 };
@@ -15,6 +21,47 @@ var toTitleCase = function toTitleCase(str) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 };
+
+var readLastLinePromise = function readLastLinePromise(path) {
+  return new Promise(function (resolve, reject) {
+    _fs2.default.readFile(path, function (err, data) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data.toString().trim().split('\n').slice(-1)[0]);
+    });
+  });
+};
+
+var appendLinePromise = function appendLinePromise(path, line) {
+  return new Promise(function (resolve, reject) {
+    _fs2.default.appendFile(path, line, function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(line);
+    });
+  });
+};
+
+var mutationType = new _graphql.GraphQLObjectType({
+  name: 'RootMutation',
+  fields: {
+    addQoute: {
+      type: _graphql.GraphQLString,
+      args: {
+        body: {
+          type: _graphql.GraphQLString
+        }
+      },
+      resolve: function resolve(_, args) {
+        return appendLinePromise('data/quotes', args.body);
+      }
+    }
+  }
+});
 
 var LetterCaseType = new _graphql.GraphQLEnumType({
   name: 'LetterCase',
@@ -79,6 +126,12 @@ var EmployeeType = new _graphql.GraphQLObjectType({
 var queryType = new _graphql.GraphQLObjectType({
   name: 'RootQuery',
   fields: {
+    lastQuote: {
+      type: _graphql.GraphQLString,
+      resolve: function resolve() {
+        return readLastLinePromise('data/quotes');
+      }
+    },
     hello: {
       type: _graphql.GraphQLString,
       resolve: function resolve() {
@@ -125,7 +178,8 @@ var queryType = new _graphql.GraphQLObjectType({
 });
 
 var mySchema = new _graphql.GraphQLSchema({
-  query: queryType
+  query: queryType,
+  mutation: mutationType
 });
 
 exports.default = mySchema;

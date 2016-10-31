@@ -8,12 +8,53 @@ import {
   GraphQLEnumType as qlEnumType,
 } from 'graphql';
 
+import fs from 'fs';
+
 const roll = () => Math.floor(6 * Math.random()) + 1;
 
 const toTitleCase = str => {
-   return str.replace(/\w\S*/g, txt =>
-     txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
- };
+  return str.replace(/\w\S*/g, txt =>
+    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+};
+
+const readLastLinePromise = path => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data.toString().trim().split('\n').slice(-1)[0]);
+    });
+  });
+}
+
+const appendLinePromise = (path, line) => {
+  return new Promise((resolve, reject) => {
+    fs.appendFile(path, line, (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(line);
+    })
+  });
+}
+
+const mutationType = new qlObjectType({
+  name: 'RootMutation',
+  fields: {
+    addQoute: {
+      type: qlString,
+      args: {
+        body: {
+          type: qlString,
+        }
+      },
+      resolve: (_, args) => appendLinePromise('data/quotes', args.body),
+    }
+  },
+});
 
 const LetterCaseType = new qlEnumType({
   name: 'LetterCase',
@@ -76,6 +117,10 @@ const EmployeeType = new qlObjectType({
 const queryType = new qlObjectType({
   name: 'RootQuery',
   fields: {
+    lastQuote: {
+      type: qlString,
+      resolve: () => readLastLinePromise('data/quotes'),
+    },
     hello: {
       type: qlString,
       resolve: () => 'world'
@@ -116,6 +161,7 @@ const queryType = new qlObjectType({
 
 const mySchema = new qlSchema({
   query: queryType,
+  mutation: mutationType,
 });
 
 export default mySchema;
