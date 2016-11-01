@@ -7,6 +7,8 @@ const app = express();
 const mySchema = require('./schema/main');
 const MONGO_URL = 'mongodb://localhost:27017/test';
 
+app.use(express.static('public'));
+
 MongoClient.connect(MONGO_URL, (err, db) => {
   assert.equal(null, err);
   console.log('Connected to MongoDB server');
