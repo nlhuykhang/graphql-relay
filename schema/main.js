@@ -81,6 +81,7 @@ const EmployeeType = new qlObjectType({
           type: qlBoolean,
         }
       },
+      deprecationReason: 'Use nameForCase instead',
       resolve: (obj, args) => {
         const fullName = `${obj.firstName} ${obj.lastName}`;
 
