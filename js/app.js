@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Quote from './quote';
+import Relay from 'react-relay';
 
 class QuotesLibrary extends React.Component {
   state = {
@@ -23,7 +24,18 @@ class QuotesLibrary extends React.Component {
   }
 }
 
+QuotesLibrary = Relay.createContainer(QuotesLibrary, {
+  fragments: {},
+});
+
+class AppRoute extends Relay.Route {
+  static routeName = 'App';
+}
+
 ReactDOM.render(
-  <QuotesLibrary/>,
+  <Relay.RootContainer
+    Component={QuotesLibrary}
+    route={new AppRoute()}
+  />,
   document.getElementById('react')
 );
