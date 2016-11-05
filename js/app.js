@@ -5,20 +5,12 @@ import Quote from './quote';
 import Relay from 'react-relay';
 
 class QuotesLibrary extends React.Component {
-  // state = {
-  //   allQuotes: []
-  // };
-  // componentDidMount() {
-  //   // Load the quotes list into this.state.allQuotes
-  //   fetch(`/ql?query={allQuotes{id,text,author}}`)
-  //   .then(res => res.json())
-  //   .then(json => this.setState(json.data))
-  //   .catch(ex => console.error(ex));
-  // }
   render() {
     return (
       <div className="quotes-list">
-        {this.props.library.allQuotes.map(quote => <Quote key={quote.id} quote={quote}/>)}
+        {this.props.library.quotesConnection.edges.map(edge => {
+          return <Quote key={edge.node.id} quote={edge.node}/>;
+        })}
       </div>
     )
   }
@@ -27,10 +19,15 @@ class QuotesLibrary extends React.Component {
 QuotesLibrary = Relay.createContainer(QuotesLibrary, {
   fragments: {
     library: () => Relay.QL `
-      fragment AllQuotes on QuotesLibrary {
-        allQuotes {
-          id
-          ${Quote.getFragment('quote')}
+      fragment on QuotesLibrary {
+        quotesConnection(first: 2) {
+          edges {
+            node {
+              id
+              ${Quote.getFragment('quote')}
+            }
+          }
+
         }
       }
     `

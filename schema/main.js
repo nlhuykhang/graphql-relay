@@ -8,6 +8,13 @@ const {
   GraphQLEnumType: qlEnumType,
 } = require('graphql');
 
+const {
+  connectionDefinitions: cDef,
+  connectionArgs: cArgs,
+  connectionFromArray: cFromArray,
+  connectionFromPromisedArray: cFromPromiseArray,
+} = require('graphql-relay');
+
 const QuoteType = new qlObjectType({
   name: 'Quote',
   fields: {
@@ -24,6 +31,11 @@ const QuoteType = new qlObjectType({
   },
 });
 
+const { connectionType: QuotesConnectionType } = cDef({
+  name: 'Quote',
+  nodeType: QuoteType,
+});
+
 const QuotesLibraryType = new qlObjectType({
   name: 'QuotesLibrary',
   fields: {
@@ -32,6 +44,15 @@ const QuotesLibraryType = new qlObjectType({
       description: 'A list of quotes in the database',
       resolve: (_, args, { db }) => db.collection('quotes').find().toArray(),
     },
+    quotesConnection: {
+      type: QuotesConnectionType,
+      description: 'A list of quotes in the dabase',
+      args: cArgs,
+      resolve: (_, args, {db}) => cFromPromiseArray(
+        db.collection('quotes').find().toArray(),
+        args
+      )
+    }
   },
 });
 

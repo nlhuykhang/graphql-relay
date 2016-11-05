@@ -83,23 +83,12 @@
 
 	  _createClass(QuotesLibrary, [{
 	    key: 'render',
-
-	    // state = {
-	    //   allQuotes: []
-	    // };
-	    // componentDidMount() {
-	    //   // Load the quotes list into this.state.allQuotes
-	    //   fetch(`/ql?query={allQuotes{id,text,author}}`)
-	    //   .then(res => res.json())
-	    //   .then(json => this.setState(json.data))
-	    //   .catch(ex => console.error(ex));
-	    // }
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'quotes-list' },
-	        this.props.library.allQuotes.map(function (quote) {
-	          return _react2.default.createElement(_quote2.default, { key: quote.id, quote: quote });
+	        this.props.library.quotesConnection.edges.map(function (edge) {
+	          return _react2.default.createElement(_quote2.default, { key: edge.node.id, quote: edge.node });
 	        })
 	      );
 	    }
@@ -111,9 +100,93 @@
 	QuotesLibrary = _reactRelay2.default.createContainer(QuotesLibrary, {
 	  fragments: {
 	    library: function library() {
-	      return function () {
-	        throw new Error('GraphQL validation error ``Unknown type "QuotesLibrary".`` in file `/Users/khangnlh/mine/graphql/graphql-project/js/app.js`. Try updating your GraphQL schema if an argument/field/type was recently added.');
-	      }();
+	      return function (RQL_0) {
+	        return {
+	          children: [{
+	            calls: [{
+	              kind: 'Call',
+	              metadata: {},
+	              name: 'first',
+	              value: {
+	                kind: 'CallValue',
+	                callValue: 2
+	              }
+	            }],
+	            children: [{
+	              children: [{
+	                children: [].concat.apply([], [{
+	                  fieldName: 'id',
+	                  kind: 'Field',
+	                  metadata: {
+	                    isRequisite: true
+	                  },
+	                  type: 'String'
+	                }, _reactRelay2.default.QL.__frag(RQL_0)]),
+	                fieldName: 'node',
+	                kind: 'Field',
+	                metadata: {
+	                  canHaveSubselections: true,
+	                  isRequisite: true
+	                },
+	                type: 'Quote'
+	              }, {
+	                fieldName: 'cursor',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'String'
+	              }],
+	              fieldName: 'edges',
+	              kind: 'Field',
+	              metadata: {
+	                canHaveSubselections: true,
+	                isPlural: true
+	              },
+	              type: 'QuoteEdge'
+	            }, {
+	              children: [{
+	                fieldName: 'hasNextPage',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'Boolean'
+	              }, {
+	                fieldName: 'hasPreviousPage',
+	                kind: 'Field',
+	                metadata: {
+	                  isGenerated: true,
+	                  isRequisite: true
+	                },
+	                type: 'Boolean'
+	              }],
+	              fieldName: 'pageInfo',
+	              kind: 'Field',
+	              metadata: {
+	                canHaveSubselections: true,
+	                isGenerated: true,
+	                isRequisite: true
+	              },
+	              type: 'PageInfo'
+	            }],
+	            fieldName: 'quotesConnection',
+	            kind: 'Field',
+	            metadata: {
+	              canHaveSubselections: true,
+	              isConnection: true
+	            },
+	            type: 'QuoteConnection'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'App_LibraryRelayQL',
+	          type: 'QuotesLibrary'
+	        };
+	      }(_quote2.default.getFragment('quote'));
 	    }
 	  }
 	});
@@ -133,9 +206,16 @@
 	AppRoute.routeName = 'App';
 	AppRoute.queries = {
 	  library: function library(Component) {
-	    return function () {
-	      throw new Error('GraphQL validation error ``Cannot query field "quotesLibrary" on type "RootQuery".`` in file `/Users/khangnlh/mine/graphql/graphql-project/js/app.js`. Try updating your GraphQL schema if an argument/field/type was recently added.');
-	    }();
+	    return function (RQL_0) {
+	      return {
+	        children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_0)]),
+	        fieldName: 'quotesLibrary',
+	        kind: 'Query',
+	        metadata: {},
+	        name: 'QuotesLibrary',
+	        type: 'QuotesLibrary'
+	      };
+	    }(Component.getFragment('library'));
 	  }
 	};
 

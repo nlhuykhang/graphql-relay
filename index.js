@@ -24,7 +24,7 @@ MongoClient.connect(MONGO_URL, (err, db) => {
   assert.equal(null, err);
   console.log('Connected to MongoDB server');
 
-  app.use('/ql', graphqlHTTP({
+  app.use('/graphql', graphqlHTTP({
     schema: mySchema,
     context: { db },
     graphiql: true
