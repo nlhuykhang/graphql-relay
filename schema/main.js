@@ -36,6 +36,11 @@ const { connectionType: QuotesConnectionType } = cDef({
   nodeType: QuoteType,
 });
 
+const cArgsWithSearch = cArgs;
+cArgs.searchTerm = {
+  type: qlString,
+};
+
 const QuotesLibraryType = new qlObjectType({
   name: 'QuotesLibrary',
   fields: {
@@ -47,11 +52,17 @@ const QuotesLibraryType = new qlObjectType({
     quotesConnection: {
       type: QuotesConnectionType,
       description: 'A list of quotes in the dabase',
-      args: cArgs,
-      resolve: (_, args, {db}) => cFromPromiseArray(
-        db.collection('quotes').find().toArray(),
-        args
-      )
+      args: cArgsWithSearch,
+      resolve: (_, args, {db}) => {
+        let findParams = {};
+        if (args.searchTerm) {
+          findParams.text = new RegExp(args.searchTerm, 'i');
+        }
+        return cFromPromiseArray(
+          db.collection('quotes').find(findParams).toArray(),
+          args
+        );
+      }
     }
   },
 });
