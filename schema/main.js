@@ -24,13 +24,24 @@ const QuoteType = new qlObjectType({
   },
 });
 
-const queryType = new qlObjectType({
-  name: 'RootQuery',
+const QuotesLibraryType = new qlObjectType({
+  name: 'QuotesLibrary',
   fields: {
     allQuotes: {
       type: new qlList(QuoteType),
       description: 'A list of quotes in the database',
-      resolve: (_, args, { db}) => db.collection('quotes').find().toArray(),
+      resolve: (_, args, { db }) => db.collection('quotes').find().toArray(),
+    },
+  },
+});
+
+const queryType = new qlObjectType({
+  name: 'RootQuery',
+  fields: {
+    quotesLibrary: {
+      type: QuotesLibraryType,
+      description: 'The Quotes Library',
+      resolve: () => ({})
     }
   }
 });

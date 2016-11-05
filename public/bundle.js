@@ -76,42 +76,29 @@
 	  _inherits(QuotesLibrary, _React$Component);
 
 	  function QuotesLibrary() {
-	    var _ref;
-
-	    var _temp, _this, _ret;
-
 	    _classCallCheck(this, QuotesLibrary);
 
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-	      allQuotes: []
-	    }, _temp), _possibleConstructorReturn(_this, _ret);
+	    return _possibleConstructorReturn(this, (QuotesLibrary.__proto__ || Object.getPrototypeOf(QuotesLibrary)).apply(this, arguments));
 	  }
 
 	  _createClass(QuotesLibrary, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this2 = this;
-
-	      // Load the quotes list into this.state.allQuotes
-	      fetch('/ql?query={allQuotes{id,text,author}}').then(function (res) {
-	        return res.json();
-	      }).then(function (json) {
-	        return _this2.setState(json.data);
-	      }).catch(function (ex) {
-	        return console.error(ex);
-	      });
-	    }
-	  }, {
 	    key: 'render',
+
+	    // state = {
+	    //   allQuotes: []
+	    // };
+	    // componentDidMount() {
+	    //   // Load the quotes list into this.state.allQuotes
+	    //   fetch(`/ql?query={allQuotes{id,text,author}}`)
+	    //   .then(res => res.json())
+	    //   .then(json => this.setState(json.data))
+	    //   .catch(ex => console.error(ex));
+	    // }
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'quotes-list' },
-	        this.state.allQuotes.map(function (quote) {
+	        this.props.library.allQuotes.map(function (quote) {
 	          return _react2.default.createElement(_quote2.default, { key: quote.id, quote: quote });
 	        })
 	      );
@@ -122,7 +109,13 @@
 	}(_react2.default.Component);
 
 	QuotesLibrary = _reactRelay2.default.createContainer(QuotesLibrary, {
-	  fragments: {}
+	  fragments: {
+	    library: function library() {
+	      return function () {
+	        throw new Error('GraphQL validation error ``Unknown type "QuotesLibrary".`` in file `/Users/khangnlh/mine/graphql/graphql-project/js/app.js`. Try updating your GraphQL schema if an argument/field/type was recently added.');
+	      }();
+	    }
+	  }
 	});
 
 	var AppRoute = function (_Relay$Route) {
@@ -138,6 +131,13 @@
 	}(_reactRelay2.default.Route);
 
 	AppRoute.routeName = 'App';
+	AppRoute.queries = {
+	  library: function library(Component) {
+	    return function () {
+	      throw new Error('GraphQL validation error ``Cannot query field "quotesLibrary" on type "RootQuery".`` in file `/Users/khangnlh/mine/graphql/graphql-project/js/app.js`. Try updating your GraphQL schema if an argument/field/type was recently added.');
+	    }();
+	  }
+	};
 
 
 	_reactDom2.default.render(_react2.default.createElement(_reactRelay2.default.RootContainer, {
@@ -21573,8 +21573,40 @@
 	}(_react2.default.Component);
 
 	Quote = _reactRelay2.default.createContainer(Quote, {
-	  fragments: {}
+	  fragments: {
+	    quote: function quote() {
+	      return function () {
+	        return {
+	          children: [{
+	            fieldName: 'text',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'String'
+	          }, {
+	            fieldName: 'author',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'String'
+	          }, {
+	            fieldName: 'id',
+	            kind: 'Field',
+	            metadata: {
+	              isGenerated: true,
+	              isRequisite: true
+	            },
+	            type: 'String'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'OneQuote',
+	          type: 'Quote'
+	        };
+	      }();
+	    }
+	  }
 	});
+
 	exports.default = Quote;
 
 /***/ },
