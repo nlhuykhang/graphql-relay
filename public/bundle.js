@@ -64,11 +64,11 @@
 
 	var _reactRelay2 = _interopRequireDefault(_reactRelay);
 
-	var _searchForm = __webpack_require__(469);
+	var _searchForm = __webpack_require__(470);
 
 	var _searchForm2 = _interopRequireDefault(_searchForm);
 
-	var _lodash = __webpack_require__(470);
+	var _lodash = __webpack_require__(471);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -152,12 +152,14 @@
 	                  metadata: {
 	                    isRequisite: true
 	                  },
-	                  type: 'String'
+	                  type: 'ID'
 	                }, _reactRelay2.default.QL.__frag(RQL_0)]),
 	                fieldName: 'node',
 	                kind: 'Field',
 	                metadata: {
 	                  canHaveSubselections: true,
+	                  inferredRootCallName: 'node',
+	                  inferredPrimaryKey: 'id',
 	                  isRequisite: true
 	                },
 	                type: 'Quote'
@@ -211,6 +213,14 @@
 	              isConnection: true
 	            },
 	            type: 'QuoteConnection'
+	          }, {
+	            fieldName: 'id',
+	            kind: 'Field',
+	            metadata: {
+	              isGenerated: true,
+	              isRequisite: true
+	            },
+	            type: 'ID'
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: 'Fragment',
@@ -240,7 +250,15 @@
 	  library: function library(Component) {
 	    return function (RQL_0) {
 	      return {
-	        children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_0)]),
+	        children: [].concat.apply([], [{
+	          fieldName: 'id',
+	          kind: 'Field',
+	          metadata: {
+	            isGenerated: true,
+	            isRequisite: true
+	          },
+	          type: 'ID'
+	        }, _reactRelay2.default.QL.__frag(RQL_0)]),
 	        fieldName: 'quotesLibrary',
 	        kind: 'Query',
 	        metadata: {},
@@ -21644,6 +21662,10 @@
 
 	var _reactRelay2 = _interopRequireDefault(_reactRelay);
 
+	var _thumbsUpMutation = __webpack_require__(469);
+
+	var _thumbsUpMutation2 = _interopRequireDefault(_thumbsUpMutation);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21656,17 +21678,50 @@
 	  _inherits(Quote, _React$Component);
 
 	  function Quote() {
+	    var _ref;
+
+	    var _temp, _this, _ret;
+
 	    _classCallCheck(this, Quote);
 
-	    return _possibleConstructorReturn(this, (Quote.__proto__ || Object.getPrototypeOf(Quote)).apply(this, arguments));
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Quote.__proto__ || Object.getPrototypeOf(Quote)).call.apply(_ref, [this].concat(args))), _this), _this.thumbsUpClick = function () {
+	      console.log(_this.props.quote);
+	      _reactRelay2.default.Store.commitUpdate(new _thumbsUpMutation2.default({
+	        quote: _this.props.quote
+	      }));
+	    }, _this.showLikes = function () {
+	      _this.props.relay.setVariables({ showLikes: true });
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
 	  }
 
 	  _createClass(Quote, [{
+	    key: 'displayLikes',
+	    value: function displayLikes() {
+	      if (!this.props.relay.variables.showLikes) {
+	        return null;
+	      }
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: '' },
+	        this.props.quote.likesCount,
+	        ' \xA0',
+	        _react2.default.createElement('span', {
+	          className: 'glyphicon glyphicon-thumbs-up',
+	          onClick: this.thumbsUpClick
+	        })
+	      );
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'blockquote',
-	        null,
+	        { onClick: this.showLikes },
 	        _react2.default.createElement(
 	          'p',
 	          null,
@@ -21676,7 +21731,8 @@
 	          'footer',
 	          null,
 	          this.props.quote.author
-	        )
+	        ),
+	        this.displayLikes()
 	      );
 	    }
 	  }]);
@@ -21685,11 +21741,14 @@
 	}(_react2.default.Component);
 
 	Quote = _reactRelay2.default.createContainer(Quote, {
+	  initialVariables: {
+	    showLikes: false
+	  },
 	  fragments: {
 	    quote: function quote() {
-	      return function () {
+	      return function (RQL_0) {
 	        return {
-	          children: [{
+	          children: [].concat.apply([], [{
 	            fieldName: 'text',
 	            kind: 'Field',
 	            metadata: {},
@@ -21700,21 +21759,37 @@
 	            metadata: {},
 	            type: 'String'
 	          }, {
+	            directives: [{
+	              kind: 'Directive',
+	              name: 'include',
+	              args: [{
+	                name: 'if',
+	                value: {
+	                  kind: 'CallVariable',
+	                  callVariableName: 'showLikes'
+	                }
+	              }]
+	            }],
+	            fieldName: 'likesCount',
+	            kind: 'Field',
+	            metadata: {},
+	            type: 'Int'
+	          }, {
 	            fieldName: 'id',
 	            kind: 'Field',
 	            metadata: {
 	              isGenerated: true,
 	              isRequisite: true
 	            },
-	            type: 'String'
-	          }],
+	            type: 'ID'
+	          }, _reactRelay2.default.QL.__frag(RQL_0)]),
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: 'Fragment',
 	          metadata: {},
 	          name: 'OneQuote',
 	          type: 'Quote'
 	        };
-	      }();
+	      }(_thumbsUpMutation2.default.getFragment('quote'));
 	    }
 	  }
 	});
@@ -45839,6 +45914,163 @@
 /* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _reactRelay = __webpack_require__(173);
+
+	var _reactRelay2 = _interopRequireDefault(_reactRelay);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ThumbsUpMutation = function (_Relay$Mutation) {
+	  _inherits(ThumbsUpMutation, _Relay$Mutation);
+
+	  function ThumbsUpMutation() {
+	    _classCallCheck(this, ThumbsUpMutation);
+
+	    return _possibleConstructorReturn(this, (ThumbsUpMutation.__proto__ || Object.getPrototypeOf(ThumbsUpMutation)).apply(this, arguments));
+	  }
+
+	  _createClass(ThumbsUpMutation, [{
+	    key: 'getMutation',
+	    value: function getMutation() {
+	      return function () {
+	        return {
+	          calls: [{
+	            kind: 'Call',
+	            metadata: {},
+	            name: 'thumbsUp',
+	            value: {
+	              kind: 'CallVariable',
+	              callVariableName: 'input'
+	            }
+	          }],
+	          children: [{
+	            fieldName: 'clientMutationId',
+	            kind: 'Field',
+	            metadata: {
+	              isGenerated: true,
+	              isRequisite: true
+	            },
+	            type: 'String'
+	          }],
+	          kind: 'Mutation',
+	          metadata: {
+	            inputType: 'ThumbsUpMutationInput!'
+	          },
+	          name: 'Thumbs',
+	          responseType: 'ThumbsUpMutationPayload'
+	        };
+	      }();
+	    }
+	  }, {
+	    key: 'getOptimisticResponse',
+	    value: function getOptimisticResponse() {
+	      return {
+	        quote: {
+	          id: this.props.quote.id,
+	          likesCount: this.props.quote.likesCount + 1
+	        }
+	      };
+	    }
+	  }, {
+	    key: 'getVariables',
+	    value: function getVariables() {
+	      return {
+	        quoteId: this.props.quote.id
+	      };
+	    }
+	  }, {
+	    key: 'getFatQuery',
+	    value: function getFatQuery() {
+	      return function () {
+	        return {
+	          children: [{
+	            children: [{
+	              fieldName: 'likesCount',
+	              kind: 'Field',
+	              metadata: {},
+	              type: 'Int'
+	            }, {
+	              fieldName: 'id',
+	              kind: 'Field',
+	              metadata: {
+	                isGenerated: true,
+	                isRequisite: true
+	              },
+	              type: 'ID'
+	            }],
+	            fieldName: 'quote',
+	            kind: 'Field',
+	            metadata: {
+	              canHaveSubselections: true,
+	              inferredRootCallName: 'node',
+	              inferredPrimaryKey: 'id'
+	            },
+	            type: 'Quote'
+	          }],
+	          id: _reactRelay2.default.QL.__id(),
+	          kind: 'Fragment',
+	          metadata: {},
+	          name: 'ThumbsRelayQL',
+	          type: 'ThumbsUpMutationPayload'
+	        };
+	      }();
+	    }
+	  }, {
+	    key: 'getConfigs',
+	    value: function getConfigs() {
+	      return [{
+	        type: 'FIELDS_CHANGE',
+	        fieldIDs: {
+	          quote: this.props.quote.id
+	        }
+	      }];
+	    }
+	  }]);
+
+	  return ThumbsUpMutation;
+	}(_reactRelay2.default.Mutation);
+
+	exports.default = ThumbsUpMutation;
+	ThumbsUpMutation.fragments = {
+	  quote: function quote() {
+	    return function () {
+	      return {
+	        children: [{
+	          fieldName: 'id',
+	          kind: 'Field',
+	          metadata: {
+	            isRequisite: true
+	          },
+	          type: 'ID'
+	        }],
+	        id: _reactRelay2.default.QL.__id(),
+	        kind: 'Fragment',
+	        metadata: {},
+	        name: 'Thumbs_QuoteRelayQL',
+	        type: 'Quote'
+	      };
+	    }();
+	  }
+	};
+
+/***/ },
+/* 470 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -45904,7 +46136,7 @@
 	exports.default = SearchForm;
 
 /***/ },
-/* 470 */
+/* 471 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -62926,10 +63158,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(471)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(472)(module)))
 
 /***/ },
-/* 471 */
+/* 472 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
